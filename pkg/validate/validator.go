@@ -44,6 +44,7 @@ func (v *Validator) wrapError(err error) error {
 }
 
 // RegisterRule registers a custom validate rule
+// validator注册动态函数
 func (v *Validator) RegisterRule(r *RegexValidateRule) error {
 	if r == nil {
 		return errors.New("empty regex validate rule")

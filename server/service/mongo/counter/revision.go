@@ -58,6 +58,7 @@ func (s *Service) GetRevision(ctx context.Context, domain string) (int64, error)
 }
 
 //ApplyRevision increase revision number and return modified value
+//增加并返回当前domain的版本号
 func ApplyRevision(ctx context.Context, domain string) (int64, error) {
 	collection := session.GetDB().Collection(session.CollectionCounter)
 	filter := bson.M{"name": revision, "domain": domain}

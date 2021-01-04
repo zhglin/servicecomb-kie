@@ -27,7 +27,7 @@ const (
 	QueryParamRev        = "revision"
 	QueryParamMatch      = "match"
 	QueryParamKey        = "key"
-	QueryParamLabel      = "label"
+	QueryParamLabel      = "label" // header头
 	QueryParamStatus     = "status"
 	QueryParamOffset     = "offset"
 	QueryParamLimit      = "limit"

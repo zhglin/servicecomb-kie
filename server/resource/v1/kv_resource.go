@@ -207,8 +207,8 @@ func (r *KVResource) List(rctx *restful.Context) {
 }
 
 func returnData(rctx *restful.Context, request *model.ListKVRequest) {
-	revStr := rctx.ReadQueryParameter(common.QueryParamRev)
-	wait := rctx.ReadQueryParameter(common.QueryParamWait)
+	revStr := rctx.ReadQueryParameter(common.QueryParamRev) // 请求的版本号
+	wait := rctx.ReadQueryParameter(common.QueryParamWait)  // 长轮询超时时间
 	if revStr == "" {
 		if wait == "" {
 			queryAndResponse(rctx, request)

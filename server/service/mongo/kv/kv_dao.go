@@ -43,7 +43,7 @@ func createKey(ctx context.Context, kv *model.KVDoc) (*model.KVDoc, error) {
 	collection := session.GetDB().Collection(session.CollectionKV)
 	var err error
 	kv.ID = uuid.NewV4().String()
-	revision, err := counter.ApplyRevision(ctx, kv.Domain)
+	revision, err := counter.ApplyRevision(ctx, kv.Domain) // 版本号
 	if err != nil {
 		openlog.Error(err.Error())
 		return nil, err
@@ -61,6 +61,7 @@ func createKey(ctx context.Context, kv *model.KVDoc) (*model.KVDoc, error) {
 		}))
 		return nil, err
 	}
+	// 添加历史版本记录
 	err = history.AddHistory(ctx, kv)
 	if err != nil {
 		openlog.Warn(
@@ -97,7 +98,7 @@ func updateKeyValue(ctx context.Context, kv *model.KVDoc) error {
 	openlog.Debug(
 		fmt.Sprintf("updateKeyValue %s with labels %s value [%s] %d ",
 			kv.Key, kv.Labels, kv.Value, ur.ModifiedCount))
-	err = history.AddHistory(ctx, kv)
+	err = history.AddHistory(ctx, kv) // 历史记录
 	if err != nil {
 		openlog.Error(
 			fmt.Sprintf("can not add revision for [%s] [%s] in [%s],err: %s",
@@ -162,6 +163,8 @@ func findKV(ctx context.Context, domain string, project string, opts service.Fin
 	}
 	return cur, int(curTotal), err
 }
+
+// 查找KvDoc
 func findOneKey(ctx context.Context, filter bson.M) ([]*model.KVDoc, error) {
 	collection := session.GetDB().Collection(session.CollectionKV)
 	sr := collection.FindOne(ctx, filter)
@@ -278,6 +281,7 @@ func findKeys(ctx context.Context, filter interface{}, withoutLabel bool) ([]*mo
 //findKVByLabel get kvs by key and label
 //key can be empty, then it will return all key values
 //if key is given, will return 0-1 key value
+// 根据参数查询
 func findKVByLabel(ctx context.Context, domain, labelFormat, key string, project string) ([]*model.KVDoc, error) {
 	filter := bson.M{"label_format": labelFormat, "domain": domain, "project": project}
 	if key != "" {

@@ -104,6 +104,7 @@ func Publish(event *KVChangeEvent) error {
 }
 
 //ObserveOnce observe key changes by (key or labels) or (key and labels)
+// 添加监听事件
 func ObserveOnce(o *Observer, topic *Topic) error {
 	topic.LabelsFormat = stringutil.FormatMap(topic.Labels)
 	b, err := json.Marshal(topic)
@@ -111,9 +112,9 @@ func ObserveOnce(o *Observer, topic *Topic) error {
 		return err
 	}
 	t := string(b)
-	observers, ok := topics.Load(t)
+	observers, ok := topics.Load(t) // key 是整个topic
 	if !ok {
-		topics.Store(t, map[string]*Observer{
+		topics.Store(t, map[string]*Observer{ // topics 下是个map
 			o.UUID: o,
 		})
 		openlog.Info("new topic:" + t)

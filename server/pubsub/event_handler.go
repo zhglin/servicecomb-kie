@@ -47,7 +47,7 @@ func handleKVEvent(e serf.Event) {
 	}
 	openlog.Debug("kv event:" + ke.Key)
 	topics.Range(func(key, value interface{}) bool { //range all topics
-		t, err := ParseTopicString(key.(string))
+		t, err := ParseTopicString(key.(string)) // key 反解 Topic
 		if err != nil {
 			openlog.Error("can not parse topic " + key.(string) + ": " + err.Error())
 			return true

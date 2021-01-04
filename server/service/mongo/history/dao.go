@@ -86,6 +86,7 @@ func AddHistory(ctx context.Context, kv *model.KVDoc) error {
 		openlog.Error(err.Error())
 		return err
 	}
+	// 处理key的历史版本记录
 	err = historyRotate(ctx, kv.ID, kv.Project, kv.Domain)
 	if err != nil {
 		openlog.Error("history rotate err: " + err.Error())
@@ -113,10 +114,11 @@ func AddDeleteTime(ctx context.Context, kvIDs []string, project, domain string) 
 }
 
 //historyRotate delete historical versions for a key that exceeds the limited number
+// 同一个key只保留100个历史版本
 func historyRotate(ctx context.Context, kvID, project, domain string) error {
 	ctx, cancel := context.WithTimeout(ctx, session.Timeout)
 	defer cancel()
-	filter := bson.M{"id": kvID, "domain": domain, "project": project}
+	filter := bson.M{"id": kvID, "domain": domain, "project": project} // 相同的id只保留100个版本
 	collection := session.GetDB().Collection(session.CollectionKVRevision)
 	curTotal, err := collection.CountDocuments(ctx, filter)
 	if err != nil {

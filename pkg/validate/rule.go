@@ -10,11 +10,11 @@ import (
 
 // RegexValidateRule contains an validate tag's info
 type RegexValidateRule struct {
-	tag           string
-	min           int64
-	max           int64
-	regex         *regexp.Regexp
-	validateFuncs []func(string) bool
+	tag           string              // 校验的字段tag
+	min           int64               // 最小值
+	max           int64               // 最大值
+	regex         *regexp.Regexp      // 正则
+	validateFuncs []func(string) bool // 校验函数
 }
 
 // Option is RegexValidateRule option
@@ -33,6 +33,7 @@ func (r *RegexValidateRule) Validate(s string) bool {
 	return true
 }
 
+// 注册到validator里的函数
 func (r *RegexValidateRule) validateFL(fl validator.FieldLevel) bool {
 	return r.Validate(fl.Field().String())
 }
@@ -43,6 +44,7 @@ func (r *RegexValidateRule) Tag() string {
 }
 
 // Explain explains the rule
+// 错误翻译
 func (r *RegexValidateRule) Explain() string {
 	explain := r.regex.String()
 	if r.max > 0 {
@@ -65,6 +67,7 @@ func (r *RegexValidateRule) matchMax(s string) bool {
 }
 
 // NewRule news a rule
+// 创建RegexValidateRule
 func NewRule(tag, regexStr string, opt *Option) *RegexValidateRule {
 	r := &RegexValidateRule{
 		tag:           tag,

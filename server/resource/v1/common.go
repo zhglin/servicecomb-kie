@@ -136,6 +136,8 @@ func writeResponse(ctx *restful.Context, v interface{}) error {
 	}
 	return ctx.WriteJSON(v, goRestful.MIME_JSON) // json is default
 }
+
+// 获取lable
 func getLabels(rctx *restful.Context) (map[string]string, error) {
 	labelSlice := rctx.Req.QueryParameters(common.QueryParamLabel)
 	if len(labelSlice) == 0 {
@@ -172,6 +174,8 @@ func getMatchPattern(rctx *restful.Context) string {
 	}
 	return m
 }
+
+// 等待事件
 func eventHappened(rctx *restful.Context, waitStr string, topic *pubsub.Topic) (bool, error) {
 	d, err := time.ParseDuration(waitStr)
 	if err != nil || d > common.MaxWait {
@@ -258,7 +262,7 @@ func queryAndResponse(rctx *restful.Context, request *model.ListKVRequest) {
 	if request.Status != "" {
 		opts = append(opts, service.WithStatus(request.Status))
 	}
-	rev, err := service.RevisionService.GetRevision(rctx.Ctx, request.Domain)
+	rev, err := service.RevisionService.GetRevision(rctx.Ctx, request.Domain) // 获取最大的版本
 	if err != nil {
 		WriteErrResponse(rctx, http.StatusInternalServerError, err.Error())
 		return
@@ -269,7 +273,7 @@ func queryAndResponse(rctx *restful.Context, request *model.ListKVRequest) {
 		WriteErrResponse(rctx, http.StatusInternalServerError, common.MsgDBError)
 		return
 	}
-	rctx.ReadResponseWriter().Header().Set(common.HeaderRevision, strconv.FormatInt(rev, 10))
+	rctx.ReadResponseWriter().Header().Set(common.HeaderRevision, strconv.FormatInt(rev, 10)) // 返回最大版本号
 	err = writeResponse(rctx, kv)
 	rctx.ReadRestfulRequest().SetAttribute(common.RespBodyContextKey, kv.Data)
 	if err != nil {

@@ -97,7 +97,7 @@ func (t *Topic) Match(event *KVChangeEvent) bool {
 			match = true
 		}
 	}
-	if t.MatchType == common.PatternExact {
+	if t.MatchType == common.PatternExact { // 精确匹配
 		if !util.IsEquivalentLabel(t.Labels, event.Labels) {
 			return false
 		}
